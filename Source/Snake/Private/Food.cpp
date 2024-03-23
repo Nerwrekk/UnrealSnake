@@ -5,6 +5,10 @@
 #include "SnakeHead.h"
 #include "Components/BoxComponent.h"
 #include "../Interface/ITriggerable.h"
+#include "GameplayDelegates.h"
+
+//This is how you implement a static event in a class in unreal
+AFood::FEeatenFood FoodEaten; 
 
 // Sets default values
 AFood::AFood()
@@ -17,6 +21,11 @@ AFood::AFood()
 
 	FoodMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Food Mesh"));
 	FoodMeshComponent->SetupAttachment(RootComponent);
+}
+
+AFood::FEeatenFood& AFood::OnFoodEaten()
+{
+	return FoodEaten;
 }
 
 // Called when the game starts or when spawned
@@ -58,7 +67,7 @@ void AFood::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 {
 	if (!OtherActor->IsA(ASnakeHead::StaticClass())) return;
 
-	OnFoodEaten.Broadcast();
+	FoodEaten.Broadcast();
 	
 	// if (OtherActor->GetClass()->ImplementsInterface(UITriggerable::StaticClass())) //keeping for learning
 	if (OtherActor->Implements<UITriggerable>()) //keeping for learning

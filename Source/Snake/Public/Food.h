@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FoodSpawner.h"
-#include "GameplayDelegates.h"
 #include "GameFramework/Actor.h"
 #include "Food.generated.h"
 

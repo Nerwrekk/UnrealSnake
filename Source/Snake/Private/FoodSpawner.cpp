@@ -9,7 +9,14 @@ AFoodSpawner::AFoodSpawner()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	CurrentFood = nullptr;
+}
 
+void AFoodSpawner::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	
+	AFood::OnFoodEaten().AddUObject(this, &AFoodSpawner::SpawnFood);
 }
 
 // Called when the game starts or when spawned
@@ -17,10 +24,10 @@ void AFoodSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	LevelMeshComponent->GetActorBounds(false, Origin, LevelBox);
+	LevelMeshComponent->GetActorBounds(true, Origin, LevelBox);
 	UE_LOG(LogTemp, Warning, TEXT("Box: %s"), *LevelBox.ToString());
 
-	SpawnFood();
+	BP_BeginPlay(); //For blueprint classes that inherit from FoodSpawner
 }
 
 // Called every frame
@@ -32,6 +39,10 @@ void AFoodSpawner::Tick(float DeltaTime)
 
 void AFoodSpawner::SpawnFood()
 {
+	if (!ensureAlways(Food))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Food class not set!!"));
+	}
 	UE_LOG(LogTemp, Warning, TEXT("spawning food!!"));
 
 	//Get Random location
@@ -39,11 +50,13 @@ void AFoodSpawner::SpawnFood()
 	FVector RandomPos{};
 	do
 	{
-		auto XPos = FMath::FRandRange(-LevelBox.X + 300, LevelBox.X);
-		auto YPos = FMath::FRandRange(-LevelBox.Y + 300, LevelBox.Y);
+		// const auto XPos = FMath::FRandRange(LevelBox.GetMin(), LevelBox.GetMax());
+		// const auto YPos = FMath::FRandRange(LevelBox.GetMin(), LevelBox.GetMax());
+		const auto XPos = FMath::FRandRange(-LevelBox.X, LevelBox.X);
+		const auto YPos = FMath::FRandRange(-LevelBox.Y, LevelBox.Y);
 
-		RandomPos.X = XPos - 100;
-		RandomPos.Y = YPos - 100;
+		RandomPos.X = XPos - XPosOffset;
+		RandomPos.Y = YPos - YPosOffset;
 		RandomPos.Z = 0;
 		//Sweep random location
 		DrawDebugSphere(GetWorld(), RandomPos, 96, 32, FColor::Red, false, 4);
@@ -61,9 +74,8 @@ void AFoodSpawner::SpawnFood()
 	// Remmember this for future references
 	// FScriptDelegate Delegate{};
 	// Delegate.BindUFunction(this, TEXT("SpawnFood"));
-	
-	if (CurrentFood)
-		CurrentFood->OnFoodEaten.AddDynamic(this, &AFoodSpawner::SpawnFood);
+	// if (CurrentFood)
+	// 	CurrentFood->OnFoodEaten.BindRaw(this, &AFoodSpawner::SpawnFood);
 }
 
 

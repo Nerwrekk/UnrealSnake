@@ -13,6 +13,10 @@
 UCLASS()
 class SNAKE_API ASnakeController : public APlayerController
 {
+public:
+	virtual void PostInitializeComponents() override;
+
+private:
 	GENERATED_BODY()
 
 public:

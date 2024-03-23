@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SnakeController.h"
 #include "GameFramework/Pawn.h"
 #include "../Interface/ITriggerable.h"
 #include "Components/SplineComponent.h"
@@ -60,7 +61,9 @@ public:
 
 	virtual void Trigger() override;
 private:
-
+	UPROPERTY()
+	ASnakeController* SnakeController;
+	
 	UPROPERTY(EditAnywhere)
 	bool ShouldRenderSpline;
 

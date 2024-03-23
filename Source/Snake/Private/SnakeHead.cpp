@@ -32,6 +32,12 @@ void ASnakeHead::BeginPlay()
 {
 	Super::BeginPlay();
 
+	SnakeController = Cast<ASnakeController>(GetController());
+	if (!SnakeController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Controller is nullptr"))
+	}
+	
 	if (SplineComponent)
 	{
 		const auto Points = SplineComponent->GetNumberOfSplinePoints();
@@ -48,7 +54,7 @@ void ASnakeHead::BeginPlay()
 void ASnakeHead::Tick(float DeltaTime)
 {
 	if (!bGameStart) return;
-	if (Cast<ASnakeController>(GetController())->GetIsDead()) return;
+	if (SnakeController->GetIsDead()) return;
 	
 	Super::Tick(DeltaTime);
 
@@ -177,9 +183,7 @@ void ASnakeHead::Trigger()
 
 	MoveSpeed = FMath::Min(MoveSpeed + 20, MaxSpeed);
 
-	auto SnakeController = Cast<ASnakeController>(GetController());
-	if (SnakeController)
-		SnakeController->IncreaseScore();
+	SnakeController->IncreaseScore();
 }
 
 void ASnakeHead::MoveSnake(float DeltaTime)

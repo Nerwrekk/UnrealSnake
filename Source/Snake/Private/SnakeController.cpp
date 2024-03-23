@@ -2,14 +2,23 @@
 
 
 #include "SnakeController.h"
-#include "Food.h"
+#include "GameplayDelegates.h"
 #include "MySaveGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "SnakeHead.h"
 #include "Snake/SnakeGameModeBase.h"
 
+void ASnakeController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	GameplayDelegates::OnGameOver.AddUObject(this, &ASnakeController::InitializeSnake);
+
+}
+
 void ASnakeController::InitializeSnake()
 {
+	UE_LOG(LogTemp, Warning, TEXT("GLOBAL GAME OVER EVENT TRIGGERED"));
 }
 
 void ASnakeController::GrowSnake()
@@ -32,6 +41,7 @@ void ASnakeController::SetIsDead(const bool bValue)
 
 	if (bIsDead)
 	{
+		GameplayDelegates::OnGameOver.Broadcast();
 		Cast<ASnakeGameModeBase>(UGameplayStatics::GetGameMode(this))->PawnDied(this->GetPawn());
 	}
 }
@@ -41,10 +51,6 @@ void ASnakeController::BeginPlayingState()
 	Super::BeginPlayingState();
 
 	MySnakeHead = GetPawn<ASnakeHead>();
-	
-	CurrentFood = Cast<AFood>(UGameplayStatics::GetActorOfClass(this, AFood::StaticClass()));
-	if (CurrentFood)
-		CurrentFood->OnFoodEaten.AddDynamic(this, &ASnakeController::IncreaseScore);
 
 	auto SnakeGameMode = Cast<ASnakeGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()));
 	if (SnakeGameMode)

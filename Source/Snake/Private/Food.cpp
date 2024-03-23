@@ -2,10 +2,8 @@
 
 
 #include "Food.h"
-#include "SnakeHead.h"
 #include "Components/BoxComponent.h"
 #include "../Interface/ITriggerable.h"
-#include "GameplayDelegates.h"
 
 //This is how you implement a static event in a class in unreal
 AFood::FEeatenFood FoodEaten; 
@@ -65,18 +63,21 @@ void AFood::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveCo
 
 void AFood::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!OtherActor->IsA(ASnakeHead::StaticClass())) return;
+	//Good way of checking for specific class
+	// if (!OtherActor->IsA(ASnakeHead::StaticClass())) return;
 
-	FoodEaten.Broadcast();
-	
 	// if (OtherActor->GetClass()->ImplementsInterface(UITriggerable::StaticClass())) //keeping for learning
 	if (OtherActor->Implements<UITriggerable>()) //keeping for learning
 		UE_LOG(LogTemp, Warning, TEXT("Trigger"));
-		
-	IITriggerable* Triggerable = Cast<IITriggerable>(OtherActor);
-	if (Triggerable)
+
+	if (IITriggerable* Triggerable = Cast<IITriggerable>(OtherActor))
+	{
 		Triggerable->Trigger();
+
+		FoodEaten.Broadcast();
+		
+		Destroy();
+	}
 	
-	Destroy();
 }
 

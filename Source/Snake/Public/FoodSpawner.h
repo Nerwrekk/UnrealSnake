@@ -9,12 +9,20 @@
 UCLASS()
 class SNAKE_API AFoodSpawner : public AActor
 {
+private:
 	GENERATED_BODY()
-	
+
 public:	
 	// Sets default values for this actor's properties
 	AFoodSpawner();
 
+	UPROPERTY(EditAnywhere)
+	float XPosOffset = 0;
+
+	UPROPERTY(EditAnywhere)
+	float YPosOffset = 0;
+
+	virtual void PostInitializeComponents() override;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -22,11 +30,15 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void BP_BeginPlay();
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnFood();
 
 private:
+	UPROPERTY(VisibleAnywhere)
 	class AFood* CurrentFood;
 
 	UPROPERTY(EditAnywhere)

@@ -8,6 +8,7 @@
 
 class UFoodEatenEvent;
 class UEventBinding;
+struct FoodEatenEventData;
 
 UCLASS()
 class SNAKE_API AFoodSpawner : public AActor
@@ -40,7 +41,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnFood();
 
-	void PrintFoodName(UFoodEatenEvent* FoodEatenEvent);
+	void PrintFoodName(FoodEatenEventData* FoodEatenEvent);
 
 protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;

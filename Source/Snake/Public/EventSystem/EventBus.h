@@ -39,7 +39,7 @@ public:
 
 	// UFUNCTION(BlueprintCallable)
 	void Publish(EEventType EventType);
-	void Publish(EEventType EventType, UEventBase* Event);
+	void Publish(EEventType EventType, EventData* Event);
 
 private:
 	UPROPERTY()

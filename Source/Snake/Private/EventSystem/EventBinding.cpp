@@ -3,6 +3,7 @@
 
 #include "EventSystem/EventBinding.h"
 #include "EventSystem/EventBase.h"
+#include "EventSystem/EventData/EventData.h"
 
 UEventBinding::UEventBinding()
 {
@@ -14,12 +15,12 @@ void UEventBinding::BindEvent(const TFunction<void()>& EventNoArgs)
 	OnEventNoArgs = EventNoArgs;
 }
 
-void UEventBinding::BindEvent(const TFunction<void(UEventBase*)>& EventToBind)
+void UEventBinding::BindEvent(const TFunction<void(EventData*)>& EventToBind)
 {
 	OnEvent = EventToBind;
 }
 
-void UEventBinding::OnEventTriggerd(UEventBase* Event)
+void UEventBinding::OnEventTriggerd(EventData* Event)
 {
 	OnEvent(Event);
 }

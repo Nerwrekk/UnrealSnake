@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EventData/EventData.h"
 #include "UObject/Object.h"
 #include "EventBinding.generated.h"
 
 class UEventBase;
+struct EventData;
 /**
  * 
  */
@@ -19,10 +21,10 @@ public:
 	UEventBinding();
 	
 	void BindEvent(const TFunction<void()>& EventNoArgs);
-	void BindEvent(const TFunction<void(UEventBase*)>& EventToBind);
+	void BindEvent(const TFunction<void(EventData*)>& EventToBind);
 
-	void OnEventTriggerd(UEventBase* Event);
+	void OnEventTriggerd(EventData* Event);
 protected:
 	TFunction<void()> OnEventNoArgs;
-	TFunction<void(UEventBase*)> OnEvent;
+	TFunction<void(EventData*)> OnEvent;
 };

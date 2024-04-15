@@ -2,6 +2,7 @@
 
 
 #include "EventSystem/EventBus.h"
+#include "EventSystem/EventData/EventData.h"
 
 #include "EventSystem/EventBase.h"
 
@@ -22,7 +23,7 @@ void UEventBus::Publish(EEventType EventType)
 {
 }
 
-void UEventBus::Publish(EEventType EventType, UEventBase* Event)
+void UEventBus::Publish(EEventType EventType, EventData* Event)
 {
 	for (auto& Binding : EventBindings)
 	{

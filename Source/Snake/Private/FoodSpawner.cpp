@@ -6,6 +6,7 @@
 #include "EventSystem/EventBase.h"
 #include "EventSystem/EventBus.h"
 #include "EventSystem/FoodEatenEvent.h"
+#include "EventSystem/EventData/FoodEatenEventData.h"
 
 // Sets default values
 AFoodSpawner::AFoodSpawner()
@@ -32,9 +33,9 @@ void AFoodSpawner::BeginPlay()
 	UE_LOG(LogTemp, Warning, TEXT("Box: %s"), *LevelBox.ToString());
 
 	EventBinding = NewObject<UEventBinding>();
-	EventBinding->BindEvent([=](UEventBase* Event)
+	EventBinding->BindEvent([=](EventData* Event)
 		{
-			PrintFoodName(Cast<UFoodEatenEvent>(Event));
+			PrintFoodName(static_cast<FoodEatenEventData*>(Event));
 		});
 	
 	if (UEventBus* EventBus = GetWorld()->GetGameInstance()->GetSubsystem<UEventBus>())
@@ -94,7 +95,7 @@ void AFoodSpawner::SpawnFood()
 	// 	CurrentFood->OnFoodEaten.BindRaw(this, &AFoodSpawner::SpawnFood);
 }
 
-void AFoodSpawner::PrintFoodName(UFoodEatenEvent* FoodEatenEvent)
+void AFoodSpawner::PrintFoodName(FoodEatenEventData* FoodEatenEvent)
 {
 	UE_LOG(LogTemp, Warning, TEXT("OMG food has been eaten: %s"), *GetNameSafe(FoodEatenEvent->FoodActor));
 }

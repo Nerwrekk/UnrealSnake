@@ -6,6 +6,7 @@
 #include "../Interface/ITriggerable.h"
 #include "EventSystem/EventBus.h"
 #include "EventSystem/FoodEatenEvent.h"
+#include "EventSystem/EventData/FoodEatenEventData.h"
 
 //This is how you implement a static event in a class in unreal
 AFood::FEeatenFood FoodEaten; 
@@ -80,9 +81,12 @@ void AFood::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherAct
 
 		if (UEventBus* EventBus = GetWorld()->GetGameInstance()->GetSubsystem<UEventBus>())
 		{
-			UFoodEatenEvent* EatenEvent = NewObject<UFoodEatenEvent>();
-			EatenEvent->FoodActor = this;
-			EventBus->Publish(EEventType::FoodConsumed, EatenEvent);
+			// UFoodEatenEvent* EatenEvent = NewObject<UFoodEatenEvent>();
+			// EatenEvent->FoodActor = this;
+
+			FoodEatenEventData EatenEventData {};
+			EatenEventData.FoodActor = this;
+			EventBus->Publish(EEventType::FoodConsumed, &EatenEventData);
 		}
 		
 		Destroy();

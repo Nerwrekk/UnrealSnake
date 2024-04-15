@@ -3,6 +3,9 @@
 
 #include "FoodSpawner.h"
 #include "Food.h"
+#include "EventSystem/EventBase.h"
+#include "EventSystem/EventBus.h"
+#include "EventSystem/FoodEatenEvent.h"
 
 // Sets default values
 AFoodSpawner::AFoodSpawner()
@@ -17,6 +20,7 @@ void AFoodSpawner::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	
 	AFood::OnFoodEaten().AddUObject(this, &AFoodSpawner::SpawnFood);
+	
 }
 
 // Called when the game starts or when spawned
@@ -27,7 +31,19 @@ void AFoodSpawner::BeginPlay()
 	LevelMeshComponent->GetActorBounds(true, Origin, LevelBox);
 	UE_LOG(LogTemp, Warning, TEXT("Box: %s"), *LevelBox.ToString());
 
+	EventBinding = NewObject<UEventBinding>();
+	EventBinding->BindEvent([=](UEventBase* Event)
+		{
+			PrintFoodName(Cast<UFoodEatenEvent>(Event));
+		});
+	
+	if (UEventBus* EventBus = GetWorld()->GetGameInstance()->GetSubsystem<UEventBus>())
+	{
+		EventBus->Subscribe(EEventType::FoodConsumed, EventBinding);
+	}
+	
 	BP_BeginPlay(); //For blueprint classes that inherit from FoodSpawner
+	
 }
 
 // Called every frame
@@ -76,6 +92,16 @@ void AFoodSpawner::SpawnFood()
 	// Delegate.BindUFunction(this, TEXT("SpawnFood"));
 	// if (CurrentFood)
 	// 	CurrentFood->OnFoodEaten.BindRaw(this, &AFoodSpawner::SpawnFood);
+}
+
+void AFoodSpawner::PrintFoodName(UFoodEatenEvent* FoodEatenEvent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("OMG food has been eaten: %s"), *GetNameSafe(FoodEatenEvent->FoodActor));
+}
+
+void AFoodSpawner::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
 }
 
 

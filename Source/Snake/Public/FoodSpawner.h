@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "FoodSpawner.generated.h"
 
+class UFoodEatenEvent;
+class UEventBinding;
+
 UCLASS()
 class SNAKE_API AFoodSpawner : public AActor
 {
@@ -37,6 +40,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SpawnFood();
 
+	void PrintFoodName(UFoodEatenEvent* FoodEatenEvent);
+
+protected:
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	class AFood* CurrentFood;
@@ -47,6 +55,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	AActor* LevelMeshComponent;
 
+	UPROPERTY()
+	UEventBinding* EventBinding;
+	
 	FVector Origin;
 	FVector LevelBox;
 };
